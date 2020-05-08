@@ -8,7 +8,7 @@ import CheckoutPage from './pages/checkout/checkout.component';
 
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Header from './components/header/header.component';
-import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument} from './firebase/firebase.utils';
 import { connect } from 'react-redux';
 import { setCurrentUser as unboundImportedSetCurrentUser } from './redux/user/user.actions';
 import { createStructuredSelector } from 'reselect';
@@ -22,14 +22,15 @@ class App extends React.Component {
     /*
     In the line below, something is happening called "variable shadowing," which is potentially very confusing. This is because the variable inside your component is not the same function as the one (setCurrentUser) you imported at the top of your file.
     */
-    const { setCurrentUser } = this.props; // we destructure the props to grab just the relevant action creator. setCurrentUser here is bound to store's dispatch function.
+    const { setCurrentUser} = this.props; // we destructure the props to grab just the relevant action creator. setCurrentUser here is bound to store's dispatch function.
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {//i.e. userAuth is not null then 
         const userRef = await createUserProfileDocument(userAuth); //Now, we have userRef object.
         //Now, that we have a reference to that place in the firestore database, we can check if the snapshot has changed.
         //This snapshot represents the data stored in the firebase database and we can get it by call method given below:
+        //We have attached a listener, an anonymous function, below to this snapshot, so that we get fresh data.
         userRef.onSnapshot(snapshot => {
-          setCurrentUser(
+          setCurrentUser(//Calling our Redux action creater method that we get from props.
             {
               id: snapshot.id,
               ...snapshot.data()//Using the spread operator to spread all the values that we get.

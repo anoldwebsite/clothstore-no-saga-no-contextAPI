@@ -7,11 +7,15 @@ export const selectCollections = createSelector(
     (shop) => shop.collections
 );
 export const selectCollection = collectionUrlParam => createSelector(
-    [selectCollections],//this gives us collections
-    (collections) => collections[collectionUrlParam]
+    [selectCollections],//this gives us collections. check for null value
+    (collections) => collections 
+    ? collections[collectionUrlParam] //If not null return collection e.g. shop/hats
+    : null //Return null in case collections is null
 );//selectCollection returns a function
 
 export const selectCollectionsForPreview = createSelector(
-    [selectCollections],
-    collections => Object.keys(collections).map(key => collections[key])
+    [selectCollections],//We have to check the collections which we get for null case
+    collections => collections
+     ? Object.keys(collections).map(key => collections[key])
+     :[]//In case of null return an empty array
 );
